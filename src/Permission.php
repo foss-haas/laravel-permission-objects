@@ -218,4 +218,13 @@ class Permission
         }
         static::$definitions = [];
     }
+
+    /**
+     * Reset registered permissions.
+     */
+    public static function reset(): void
+    {
+        static::$definitions = [];
+        static::$instances = [];
+    }
 }
