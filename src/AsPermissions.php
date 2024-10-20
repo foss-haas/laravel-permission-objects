@@ -9,6 +9,9 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
+/**
+ * Manages permissions in Laravel applications.
+ */
 class AsPermissions implements Arrayable, Castable, Jsonable
 {
     /**
@@ -17,7 +20,9 @@ class AsPermissions implements Arrayable, Castable, Jsonable
     private $permissions = [];
 
     /**
-     * @param  ?list<array{'name':string,'object_id':string|null}>|null  $items
+     * Create a new instance and load initial permissions.
+     *
+     * @param  ?list<array{'name':string,'object_id':string|null}>|null  $items List of permissions to load
      */
     public function __construct(?array $items = null)
     {
@@ -27,7 +32,9 @@ class AsPermissions implements Arrayable, Castable, Jsonable
     }
 
     /**
-     * @param  list<array{'name':string,'object_id':string|null}>  $items
+     * Load permissions from an array of items.
+     *
+     * @param  list<array{'name':string,'object_id':string|null}>  $items List of permissions to load
      */
     public function load(array $items): self
     {
@@ -49,7 +56,10 @@ class AsPermissions implements Arrayable, Castable, Jsonable
     }
 
     /**
-     * @param  string|object|null  $object
+     * Laravel Gate-compatible check for permissions.
+     *
+     * @param  string  $ability Name of the permission to check
+     * @param  string|object|null  $object Object or object type (i.e. class name) to check the permission for or null for global permissions
      */
     public function can(string $ability, mixed $object): ?bool
     {
@@ -75,6 +85,12 @@ class AsPermissions implements Arrayable, Castable, Jsonable
         return $this->has($permission, $objectId);
     }
 
+    /**
+     * Check if the given permission exists for the specified object ID.
+     *
+     * @param  Permission  $permission Permission to check for
+     * @param  string|null  $objectId Object ID to check the permission for or null for global permissions
+     */
     public function has(Permission $permission, ?string $objectId): bool
     {
         $id = $permission->getKey();
@@ -91,6 +107,12 @@ class AsPermissions implements Arrayable, Castable, Jsonable
         return in_array((string) $objectId, $this->permissions[$id]);
     }
 
+    /**
+     * Grant a permission for the specified object ID.
+     *
+     * @param  Permission  $permission Permission to grant
+     * @param  string|null  $objectId Object ID to grant the permission for or null for global permissions
+     */
     public function grant(Permission $permission, ?string $objectId): self
     {
         $id = $permission->getKey();
@@ -109,6 +131,12 @@ class AsPermissions implements Arrayable, Castable, Jsonable
         return $this;
     }
 
+    /**
+     * Revoke a permission for the specified object ID.
+     *
+     * @param  Permission  $permission Permission to revoke
+     * @param  string|null  $objectId Object ID to revoke the permission for or null for global permissions
+     */
     public function revoke(Permission $permission, ?string $objectId): self
     {
         $id = $permission->getKey();
@@ -132,6 +160,11 @@ class AsPermissions implements Arrayable, Castable, Jsonable
         return $this;
     }
 
+    /**
+     * Revoke all permissions or a specific permission.
+     *
+     * @param  Permission|null  $permission Permission to revoke or null for all permissions
+     */
     public function revokeAll(?Permission $permission = null): self
     {
         if ($permission === null) {

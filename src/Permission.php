@@ -7,9 +7,13 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 
 /**
- * @property string $qualifier
- * @property string $name
- * @property string $objectType
+ * Represents a permission type that can be assigned, revoked or checked.
+ *
+ * @property string|null $qualifier The qualifier of the permission (i.e. the
+ * morph alias of the object type) or null for global permissions
+ * @property string $name The name of the permission
+ * @property string|null $objectType The object type (i.e. class name) the
+ * permission is applicable to or null for global permissions
  */
 class Permission
 {
@@ -33,7 +37,10 @@ class Permission
     ) {}
 
     /**
-     * Get the key of the permission.
+     * Get the ID of the permission.
+     *
+     * For global permissions, the ID is just the name. For object/class
+     * permissions, the ID is prefixed by the morph alias of the object type.
      */
     public function getKey(): string
     {
@@ -51,7 +58,7 @@ class Permission
     }
 
     /**
-     * Get the label of the permission.
+     * Get the human-readable label of the permission.
      */
     public function getLabel(): string
     {
@@ -65,10 +72,12 @@ class Permission
 
     /**
      * Check if the permission is applicable to the given object.
+     *
+     * @param  string|object|null  $object The object or object type (i.e. class
+     * name) to check against or null for global permissions
      */
     public function isApplicableTo(mixed $object): bool
     {
-        
         if (is_string($object)) {
             return Relation::getMorphAlias($object) === $this->qualifier;
         }
@@ -84,6 +93,9 @@ class Permission
 
     /**
      * Check if the permission is not applicable to the given object.
+     *
+     * @param  string|object|null  $object The object or object type (i.e. class
+     * name) to check against or null for global permissions
      */
     public function isNotApplicableTo(mixed $object): bool
     {
@@ -101,7 +113,12 @@ class Permission
     }
 
     /**
-     * @param  array<string,string|Closure>  $permissions  Name => Label
+     * Register permissions for a class.
+     *
+     * @param string|null $class The class to register permissions for or null
+     * for global permissions
+     * @param array<string,string|Closure> $permissions The permissions to
+     * register (name => label)
      */
     public static function register(?string $class, array $permissions): void
     {
@@ -113,6 +130,12 @@ class Permission
             : $permissions;
     }
 
+    /**
+     * Find a permission by its ID.
+     *
+     * @param string $id The ID of the permission to find
+     * @return Permission|null The found permission or null if not found
+     */
     public static function find(string $id): ?Permission
     {
         static::loadValues();
@@ -123,6 +146,14 @@ class Permission
         return static::$instances[$id];
     }
 
+    /**
+     * Resolve a permission by name and object type.
+     *
+     * @param string $name The name of the permission
+     * @param string|null $objectType The object type (i.e. class name) or null
+     * for global permissions
+     * @return Permission|null The resolved permission or null if not found
+     */
     public static function resolve(string $name, ?string $objectType): ?Permission
     {
         if ($objectType === null) {
@@ -133,14 +164,26 @@ class Permission
         return static::find("{$qualifier}.{$name}");
     }
 
+    /**
+     * Get all registered permissions.
+     *
+     * @return array<string,Permission> All registered permissions by ID
+     */
     public static function all(): array
     {
         static::loadValues();
 
         return static::$instances;
     }
-
-        public static function for(string|null $objectType): array
+    /**
+     * Get all permissions for a specific class.
+     *
+     * @param string|null $objectType The object type (i.e. class name) to get
+     * permissions for or null for global permissions
+     * @return array<string,Permission> Permissions for the specified object
+     * type (i.e. class name) by name (relative to the class name)
+     */
+    public static function for(string|null $objectType): array
     {
         static::loadValues();
 
@@ -153,6 +196,10 @@ class Permission
         );
     }
 
+    /**
+     * Create instances for all previously defined permissions if they don't
+     * exist yet.
+     */
     protected static function loadValues(): void
     {
         if (! static::$definitions) {
