@@ -14,7 +14,7 @@ class AsPermissionsTest extends TestCase
     parent::setUp();
     Permission::reset();
     Permission::register(null, [
-      'global-permission' => fn() => 'Global Permission',
+      'simple-permission' => fn() => 'Simple Permission',
     ]);
     Permission::register(TestModel::class, [
       'view' => fn() => 'View Test Model',
@@ -34,18 +34,18 @@ class AsPermissionsTest extends TestCase
    * @covers \FossHaas\LaravelPermissionObjects\AsPermissions::has
    * @covers \FossHaas\LaravelPermissionObjects\AsPermissions::revoke
    */
-  public function testGlobalPermissions()
+  public function testSimplePermissions()
   {
     $permissions = new AsPermissions();
-    $globalPermission = Permission::find('global-permission');
+    $simplePermission = Permission::find('simple-permission');
 
-    $this->assertFalse($permissions->has($globalPermission, null));
+    $this->assertFalse($permissions->has($simplePermission, null));
 
-    $permissions->grant($globalPermission, null);
-    $this->assertTrue($permissions->has($globalPermission, null));
+    $permissions->grant($simplePermission, null);
+    $this->assertTrue($permissions->has($simplePermission, null));
 
-    $permissions->revoke($globalPermission, null);
-    $this->assertFalse($permissions->has($globalPermission, null));
+    $permissions->revoke($simplePermission, null);
+    $this->assertFalse($permissions->has($simplePermission, null));
   }
 
   /**
@@ -159,17 +159,17 @@ class AsPermissionsTest extends TestCase
   public function testRevokeAll()
   {
     $permissions = new AsPermissions();
-    $globalPermission = Permission::find('global-permission');
+    $simplePermission = Permission::find('simple-permission');
     $viewPermission = Permission::find('test-model.view');
     $editPermission = Permission::find('test-model.edit');
 
-    $permissions->grant($globalPermission, null);
+    $permissions->grant($simplePermission, null);
     $permissions->grant($viewPermission, null);
     $permissions->grant($editPermission, '1');
 
     $permissions->revokeAll();
 
-    $this->assertFalse($permissions->has($globalPermission, null));
+    $this->assertFalse($permissions->has($simplePermission, null));
     $this->assertFalse($permissions->has($viewPermission, null));
     $this->assertFalse($permissions->has($editPermission, '1'));
   }
@@ -222,19 +222,18 @@ class AsPermissionsTest extends TestCase
   public function testCanMethod()
   {
     $permissions = new AsPermissions();
-    $globalPermission = Permission::find('global-permission');
+    $simplePermission = Permission::find('simple-permission');
     $viewTestPermission = Permission::find('test-model.view');
     $editTestPermission = Permission::find('test-model.edit');
-    $viewOtherPermission = Permission::find('other-model.view');
 
-    $permissions->grant($globalPermission, null);
+    $permissions->grant($simplePermission, null);
     $permissions->grant($viewTestPermission, null);
     $permissions->grant($editTestPermission, '1');
 
-    // Global permission
-    $this->assertTrue($permissions->can('global-permission', null));
-    $this->assertNull($permissions->can('global-permission', TestModel::class));
-    $this->assertNull($permissions->can('global-permission', new TestModel()));
+    // Simple permission
+    $this->assertTrue($permissions->can('simple-permission', null));
+    $this->assertNull($permissions->can('simple-permission', TestModel::class));
+    $this->assertNull($permissions->can('simple-permission', new TestModel()));
 
     // Class-level permission
     $this->assertTrue($permissions->can('view', TestModel::class));
@@ -294,7 +293,7 @@ class AsPermissionsTest extends TestCase
   public function testLoadAndToArray()
   {
     $initialPermissions = [
-      ['name' => 'global-permission', 'object_id' => null],
+      ['name' => 'simple-permission', 'object_id' => null],
       ['name' => 'test-model.view', 'object_id' => null],
       ['name' => 'test-model.edit', 'object_id' => '1'],
       ['name' => 'test-model.edit', 'object_id' => '2'],
@@ -302,7 +301,7 @@ class AsPermissionsTest extends TestCase
 
     $permissions = new AsPermissions($initialPermissions);
 
-    $this->assertTrue($permissions->can('global-permission', null));
+    $this->assertTrue($permissions->can('simple-permission', null));
     $this->assertTrue($permissions->can('view', TestModel::class));
     $this->assertTrue($permissions->can('edit', new TestModel(['id' => 1])));
     $this->assertTrue($permissions->can('edit', new TestModel(['id' => 2])));
@@ -310,7 +309,7 @@ class AsPermissionsTest extends TestCase
 
     $arrayRepresentation = $permissions->toArray();
     $this->assertCount(4, $arrayRepresentation);
-    $this->assertContains(['name' => 'global-permission', 'object_id' => null], $arrayRepresentation);
+    $this->assertContains(['name' => 'simple-permission', 'object_id' => null], $arrayRepresentation);
     $this->assertContains(['name' => 'test-model.view', 'object_id' => null], $arrayRepresentation);
     $this->assertContains(['name' => 'test-model.edit', 'object_id' => '1'], $arrayRepresentation);
     $this->assertContains(['name' => 'test-model.edit', 'object_id' => '2'], $arrayRepresentation);

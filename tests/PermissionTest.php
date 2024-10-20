@@ -15,7 +15,7 @@ class PermissionTest extends TestCase
     parent::setUp();
     Permission::reset();
     Permission::register(null, [
-      'global-permission' => fn() => $this->__('Global Permission'),
+      'simple-permission' => fn() => $this->__('Simple Permission'),
     ]);
     Permission::register(TestModel::class, [
       'view' => fn() => $this->__('View Test Model'),
@@ -33,9 +33,9 @@ class PermissionTest extends TestCase
    */
   public function testRegisterAndFind()
   {
-    $globalPermission = Permission::find('global-permission');
-    $this->assertNotNull($globalPermission);
-    $this->assertEquals('global-permission', $globalPermission->getKey());
+    $simplePermission = Permission::find('simple-permission');
+    $this->assertNotNull($simplePermission);
+    $this->assertEquals('simple-permission', $simplePermission->getKey());
 
     $viewPermission = Permission::find('test-model.view');
     $this->assertNotNull($viewPermission);
@@ -47,9 +47,9 @@ class PermissionTest extends TestCase
    */
   public function testResolve()
   {
-    $globalPermission = Permission::resolve('global-permission', null);
-    $this->assertNotNull($globalPermission);
-    $this->assertEquals('global-permission', $globalPermission->getKey());
+    $simplePermission = Permission::resolve('simple-permission', null);
+    $this->assertNotNull($simplePermission);
+    $this->assertEquals('simple-permission', $simplePermission->getKey());
 
     $viewPermission = Permission::resolve('view', TestModel::class);
     $this->assertNotNull($viewPermission);
@@ -63,7 +63,7 @@ class PermissionTest extends TestCase
   {
     $allPermissions = Permission::all();
     $this->assertCount(3, $allPermissions);
-    $this->assertArrayHasKey('global-permission', $allPermissions);
+    $this->assertArrayHasKey('simple-permission', $allPermissions);
     $this->assertArrayHasKey('test-model.view', $allPermissions);
     $this->assertArrayHasKey('test-model.edit', $allPermissions);
   }
@@ -84,12 +84,12 @@ class PermissionTest extends TestCase
    */
   public function testIsApplicableTo()
   {
-    $globalPermission = Permission::find('global-permission');
+    $simplePermission = Permission::find('simple-permission');
     $viewPermission = Permission::find('test-model.view');
 
-    $this->assertTrue($globalPermission->isApplicableTo(null));
-    $this->assertFalse($globalPermission->isApplicableTo('any-string'));
-    $this->assertFalse($globalPermission->isApplicableTo(new OtherModel()));
+    $this->assertTrue($simplePermission->isApplicableTo(null));
+    $this->assertFalse($simplePermission->isApplicableTo('any-string'));
+    $this->assertFalse($simplePermission->isApplicableTo(new OtherModel()));
 
     $this->assertFalse($viewPermission->isApplicableTo(null));
     $this->assertTrue($viewPermission->isApplicableTo(TestModel::class));
@@ -103,12 +103,12 @@ class PermissionTest extends TestCase
    */
   public function testIsNotApplicableTo()
   {
-    $globalPermission = Permission::find('global-permission');
+    $simplePermission = Permission::find('simple-permission');
     $viewPermission = Permission::find('test-model.view');
 
-    $this->assertFalse($globalPermission->isNotApplicableTo(null));
-    $this->assertTrue($globalPermission->isNotApplicableTo('any-string'));
-    $this->assertTrue($globalPermission->isNotApplicableTo(new OtherModel()));
+    $this->assertFalse($simplePermission->isNotApplicableTo(null));
+    $this->assertTrue($simplePermission->isNotApplicableTo('any-string'));
+    $this->assertTrue($simplePermission->isNotApplicableTo(new OtherModel()));
 
     $this->assertTrue($viewPermission->isNotApplicableTo(null));
     $this->assertFalse($viewPermission->isNotApplicableTo(TestModel::class));
@@ -122,19 +122,19 @@ class PermissionTest extends TestCase
    */
   public function testDynamicLabel()
   {
-    $globalPermission = Permission::find('global-permission');
+    $simplePermission = Permission::find('simple-permission');
     $viewPermission = Permission::find('test-model.view');
     $editPermission = Permission::find('test-model.edit');
 
     // Test English labels
     $this->currentLocale = 'en';
-    $this->assertEquals('Global Permission', $globalPermission->getLabel());
+    $this->assertEquals('Simple Permission', $simplePermission->getLabel());
     $this->assertEquals('View Test Model', $viewPermission->getLabel());
     $this->assertEquals('Edit Test Model', $editPermission->getLabel());
 
     // Test French labels
     $this->currentLocale = 'fr';
-    $this->assertEquals('Permission Globale', $globalPermission->getLabel());
+    $this->assertEquals('Permission Simple', $simplePermission->getLabel());
     $this->assertEquals('Voir le Modèle de Test', $viewPermission->getLabel());
     $this->assertEquals('Modifier le Modèle de Test', $editPermission->getLabel());
   }
@@ -144,12 +144,12 @@ class PermissionTest extends TestCase
   {
     $translations = [
       'en' => [
-        'Global Permission' => 'Global Permission',
+        'Simple Permission' => 'Simple Permission',
         'View Test Model' => 'View Test Model',
         'Edit Test Model' => 'Edit Test Model',
       ],
       'fr' => [
-        'Global Permission' => 'Permission Globale',
+        'Simple Permission' => 'Permission Simple',
         'View Test Model' => 'Voir le Modèle de Test',
         'Edit Test Model' => 'Modifier le Modèle de Test',
       ],

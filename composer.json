@@ -1,6 +1,6 @@
 {
     "name": "foss-haas/laravel-permission-objects",
-    "description": "Object-level, model-level and global permissions for Laravel",
+    "description": "Object-level, model-level and simple permissions for Laravel",
     "authors": [
         {
             "name": "Alan Plum",

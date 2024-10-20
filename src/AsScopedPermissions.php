@@ -49,7 +49,7 @@ class AsScopedPermissions implements Arrayable, Castable, Jsonable
         }
         foreach ($scoped as $scope => $scopedItems) {
             if (! isset($this->scoped[$scope])) {
-                $this->scoped[$scope] = new Permissions;
+                $this->scoped[$scope] = new AsPermissions;
             }
             $this->scoped[$scope]->load($scopedItems);
         }
@@ -61,7 +61,7 @@ class AsScopedPermissions implements Arrayable, Castable, Jsonable
      * Laravel Gate-compatible check for permissions.
      *
      * @param  string  $ability Name of the permission to check
-     * @param  string|object|null  $object Object or object type (i.e. class name) to check the permission for or null for global permissions
+     * @param  string|object|null  $object Object or object type (i.e. class name) to check the permission for or null for simple permissions
      * @param  string|list<string>  $scopes Scopes to check the permission in
      */
     public function can(string $ability, mixed $object, string|array $scopes = self::DEFAULT_SCOPE): ?bool
@@ -92,7 +92,7 @@ class AsScopedPermissions implements Arrayable, Castable, Jsonable
      * Check if the given permission exists for the specified object ID and scopes.
      *
      * @param  Permission  $permission Permission to check for
-     * @param  string|null  $objectId Object ID to check the permission for or null for global permissions
+     * @param  string|null  $objectId Object ID to check the permission for or null for simple permissions
      * @param  string|list<string>  $scopes Scopes to check the permission in
      */
     public function has(Permission $permission, ?string $objectId, string|array $scopes = self::DEFAULT_SCOPE): bool
@@ -118,7 +118,7 @@ class AsScopedPermissions implements Arrayable, Castable, Jsonable
      * Grant a permission for the specified object ID and scopes.
      *
      * @param  Permission  $permission Permission to grant
-     * @param  string|null  $objectId Object ID to grant the permission for or null for global permissions
+     * @param  string|null  $objectId Object ID to grant the permission for or null for simple permissions
      * @param  string|list<string>  $scopes Scopes to grant the permission in
      */
     public function grant(Permission $permission, ?string $objectId, string|array $scopes = self::DEFAULT_SCOPE): self
@@ -130,7 +130,7 @@ class AsScopedPermissions implements Arrayable, Castable, Jsonable
         }
         foreach ($scopes as $scope) {
             if (! isset($this->scoped[$scope])) {
-                $this->scoped[$scope] = new Permissions;
+                $this->scoped[$scope] = new AsPermissions;
             }
             $this->scoped[$scope]->grant($permission, $objectId);
         }
@@ -142,7 +142,7 @@ class AsScopedPermissions implements Arrayable, Castable, Jsonable
      * Revoke a permission for the specified object ID and scopes.
      *
      * @param  Permission  $permission Permission to revoke
-     * @param  string|null  $objectId Object ID to revoke the permission for or null for global permissions
+     * @param  string|null  $objectId Object ID to revoke the permission for or null for simple permissions
      * @param  string|list<string>  $scopes Scopes to revoke the permission in
      */
     public function revoke(Permission $permission, ?string $objectId, string|array $scopes = self::DEFAULT_SCOPE): self
@@ -220,7 +220,7 @@ class AsScopedPermissions implements Arrayable, Castable, Jsonable
     {
         return array_merge(
             ...array_map(
-                fn(Permissions $permissions, string $scope) => array_map(
+                fn(AsPermissions $permissions, string $scope) => array_map(
                     fn(array $item) => array_merge($item, ['scope' => $scope ?: null]),
                     $permissions->toArray()
                 ),

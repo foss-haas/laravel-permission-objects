@@ -59,7 +59,7 @@ class AsPermissions implements Arrayable, Castable, Jsonable
      * Laravel Gate-compatible check for permissions.
      *
      * @param  string  $ability Name of the permission to check
-     * @param  string|object|null  $object Object or object type (i.e. class name) to check the permission for or null for global permissions
+     * @param  string|object|null  $object Object or object type (i.e. class name) to check the permission for or null for simple permissions
      */
     public function can(string $ability, mixed $object): ?bool
     {
@@ -89,7 +89,7 @@ class AsPermissions implements Arrayable, Castable, Jsonable
      * Check if the given permission exists for the specified object ID.
      *
      * @param  Permission  $permission Permission to check for
-     * @param  string|null  $objectId Object ID to check the permission for or null for global permissions
+     * @param  string|null  $objectId Object ID to check the permission for or null for simple permissions
      */
     public function has(Permission $permission, ?string $objectId): bool
     {
@@ -111,7 +111,7 @@ class AsPermissions implements Arrayable, Castable, Jsonable
      * Grant a permission for the specified object ID.
      *
      * @param  Permission  $permission Permission to grant
-     * @param  string|null  $objectId Object ID to grant the permission for or null for global permissions
+     * @param  string|null  $objectId Object ID to grant the permission for or null for simple permissions
      */
     public function grant(Permission $permission, ?string $objectId): self
     {
@@ -135,7 +135,7 @@ class AsPermissions implements Arrayable, Castable, Jsonable
      * Revoke a permission for the specified object ID.
      *
      * @param  Permission  $permission Permission to revoke
-     * @param  string|null  $objectId Object ID to revoke the permission for or null for global permissions
+     * @param  string|null  $objectId Object ID to revoke the permission for or null for simple permissions
      */
     public function revoke(Permission $permission, ?string $objectId): self
     {

@@ -1,6 +1,6 @@
 # Laravel Permission Objects
 
-This package implements object-level, model-level and global permissions for
+This package implements object-level, model-level and simple permissions for
 Laravel.
 
 Once installed you can do stuff like this:
@@ -25,16 +25,16 @@ to store the permissions. You can call it anything you want:
 $table->jsonb('permissions');
 ```
 
-You need to cast it to `Permissions` or `ScopedPermissions` depending on
+You need to cast it to `AsPermissions` or `AsScopedPermissions` depending on
 whether you need permissions to be global or scoped (e.g. to a tenant):
 
 ```php
-use FossHaas\LaravelPermissionObjects\Permissions;
+use FossHaas\LaravelPermissionObjects\AsPermissions;
 
 protected function casts(): array
 {
     return [
-        'permissions' => Permissions::class,
+        'permissions' => AsPermissions::class,
     ];
 }
 ```
@@ -217,7 +217,7 @@ Gate::after(function (User $user, string $ability, bool|null $result, mixed $arg
 Gate::authorize('edit', [$article]);
 ```
 
-This also works when using `ScopedPermissions`:
+This also works when using `AsScopedPermissions`:
 
 ```php
 Gate::after(function (User $user, string $ability, bool|null $result, mixed $arguments) {
@@ -235,10 +235,10 @@ Note that the `can` method returns `null` when passed a permission name it does
 not recognize or that can't be resolved using the object or object type it is
 passed.
 
-## Global Permissions
+## Simple Permissions
 
 Permissions don't have to be tied to specific models or classes. You can
-define global permissions by passing `null` instead of a class when registering
+define simple permissions by passing `null` instead of a class when registering
 them:
 
 ```php
@@ -269,8 +269,8 @@ $user->permissions->can('self-destruct', '1234'); // Always returns null!
 
 ### Super Admins
 
-Although not built for this purpose, global permissions can be used to
-implement as "super admin" flag that will pass all `Gate` or `Policy` checks:
+Although not built for this purpose, simple permissions can be used to
+implement a "super admin" flag that will pass all `Gate` or `Policy` checks:
 
 ```php
 use App\Models\User;
@@ -294,7 +294,7 @@ Gate::before(function (User $user): bool|null {
 
 ## Scoped Permissions
 
-When using `ScopedPermissions`, you can pass in an additional `scopes`
+When using `AsScopedPermissions`, you can pass in an additional `scopes`
 parameter to method calls to define which scope or scopes the method should
 consider:
 
@@ -302,7 +302,7 @@ consider:
 $user->permissions->grant($permission, $objectId, $scope);
 ```
 
-Alternatively, you can use the `scope` method to access the `Permissions`
+Alternatively, you can use the `scope` method to access the `AsPermissions`
 for that scope directly:
 
 ```php
@@ -314,23 +314,25 @@ up to your application's needs but could range from organizational units of
 your company to different customers in a poor man's single-database
 multi-tenancy implementation.
 
-The default or global scope is identified by the empty string and will be used
-if no scope is passed explicitly.
+The default or global scope is identified by `AsScopedPermissions::DEFAULT_SCOPE`
+(which is set to the empty string) and will be used if no scope is passed
+explicitly.
 
 All permission checks using `has` or `can` will always also check the default
 scope in addition to any scopes passed explicitly.
 
-To revoke all permissions in all scopes, `null` can be passed as scope when
-using `revokeAll`:
+You can also use `AsScopedPermissions::ALL_SCOPES` (which is set to `'*'`) to
+refer to all scopes, e.g. to revoke a given permission across all scopes:
 
 ```php
-$user->permissions->revokeAll($permission, scopes: null);
+// This is also the default behavior of `revokeAll` if no scopes are specified
+$user->permissions->revokeAll($permission, AsScopedPermissions::ALL_SCOPES);
 ```
 
 ## Roles
 
 If you want to implement role-based authorization, you can create a role model
-and give it a `Permissions` attribute just as you would for a user model. As
+and give it an `AsPermissions` attribute just as you would for a user model. As
 this package aims to be unopinionated, how you use this model is up to you,
 but a possible schema could look like this:
 

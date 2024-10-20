@@ -10,10 +10,10 @@ use Illuminate\Support\Arr;
  * Represents a permission type that can be assigned, revoked or checked.
  *
  * @property string|null $qualifier The qualifier of the permission (i.e. the
- * morph alias of the object type) or null for global permissions
+ * morph alias of the object type) or null for simple permissions
  * @property string $name The name of the permission
  * @property string|null $objectType The object type (i.e. class name) the
- * permission is applicable to or null for global permissions
+ * permission is applicable to or null for simple permissions
  */
 class Permission
 {
@@ -39,7 +39,7 @@ class Permission
     /**
      * Get the ID of the permission.
      *
-     * For global permissions, the ID is just the name. For object/class
+     * For simple permissions, the ID is just the name. For object/class
      * permissions, the ID is prefixed by the morph alias of the object type.
      */
     public function getKey(): string
@@ -74,7 +74,7 @@ class Permission
      * Check if the permission is applicable to the given object.
      *
      * @param  string|object|null  $object The object or object type (i.e. class
-     * name) to check against or null for global permissions
+     * name) to check against or null for simple permissions
      */
     public function isApplicableTo(mixed $object): bool
     {
@@ -95,7 +95,7 @@ class Permission
      * Check if the permission is not applicable to the given object.
      *
      * @param  string|object|null  $object The object or object type (i.e. class
-     * name) to check against or null for global permissions
+     * name) to check against or null for simple permissions
      */
     public function isNotApplicableTo(mixed $object): bool
     {
@@ -116,7 +116,7 @@ class Permission
      * Register permissions for a class.
      *
      * @param string|null $class The class to register permissions for or null
-     * for global permissions
+     * for simple permissions
      * @param array<string,string|Closure> $permissions The permissions to
      * register (name => label)
      */
@@ -151,7 +151,7 @@ class Permission
      *
      * @param string $name The name of the permission
      * @param string|null $objectType The object type (i.e. class name) or null
-     * for global permissions
+     * for simple permissions
      * @return Permission|null The resolved permission or null if not found
      */
     public static function resolve(string $name, ?string $objectType): ?Permission
@@ -179,7 +179,7 @@ class Permission
      * Get all permissions for a specific class.
      *
      * @param string|null $objectType The object type (i.e. class name) to get
-     * permissions for or null for global permissions
+     * permissions for or null for simple permissions
      * @return array<string,Permission> Permissions for the specified object
      * type (i.e. class name) by name (relative to the class name)
      */
