@@ -9,14 +9,14 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
-class ScopedPermissions implements Arrayable, Castable, Jsonable
+class AsScopedPermissions implements Arrayable, Castable, Jsonable
 {
     public const DEFAULT_SCOPE = '';
 
     public const ALL_SCOPES = '*';
 
     /**
-     * @var array<string, Permissions>
+     * @var array<string, AsPermissions>
      */
     private $scoped = [];
 
@@ -67,7 +67,7 @@ class ScopedPermissions implements Arrayable, Castable, Jsonable
                     $objectId = (string) $object->getKey();
                 }
             } else {
-                throw new \InvalidArgumentException('Object must be a string or an object, '.gettype($object).' given.');
+                throw new \InvalidArgumentException('Object must be a string or an object, ' . gettype($object) . ' given.');
             }
         }
         $permission = Permission::resolve($ability, $objectType);
@@ -162,10 +162,10 @@ class ScopedPermissions implements Arrayable, Castable, Jsonable
         return $this;
     }
 
-    public function scope(string $scope): Permissions
+    public function scope(string $scope): AsPermissions
     {
         if (! isset($this->scoped[$scope])) {
-            $this->scoped[$scope] = new Permissions;
+            $this->scoped[$scope] = new AsPermissions;
         }
 
         return $this->scoped[$scope];
@@ -175,7 +175,7 @@ class ScopedPermissions implements Arrayable, Castable, Jsonable
     {
         return Arr::mapWithKeys(
             $this->scoped,
-            fn ($value, $scope) => [$scope => $value->__debugInfo()]
+            fn($value, $scope) => [$scope => $value->__debugInfo()]
         );
     }
 
@@ -186,8 +186,8 @@ class ScopedPermissions implements Arrayable, Castable, Jsonable
     {
         return array_merge(
             ...array_map(
-                fn (Permissions $permissions, string $scope) => array_map(
-                    fn (array $item) => array_merge($item, ['scope' => $scope ?: null]),
+                fn(Permissions $permissions, string $scope) => array_map(
+                    fn(array $item) => array_merge($item, ['scope' => $scope ?: null]),
                     $permissions->toArray()
                 ),
                 $this->scoped,
@@ -214,7 +214,7 @@ class ScopedPermissions implements Arrayable, Castable, Jsonable
         $items = json_decode($json, associative: true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \InvalidArgumentException('Invalid JSON provided: '.json_last_error_msg());
+            throw new \InvalidArgumentException('Invalid JSON provided: ' . json_last_error_msg());
         }
 
         if (! is_array($items)) {
@@ -231,10 +231,10 @@ class ScopedPermissions implements Arrayable, Castable, Jsonable
             public function get(Model $model, string $key, mixed $value, array $attributes): mixed
             {
                 if (! $value) {
-                    return new ScopedPermissions;
+                    return new AsScopedPermissions;
                 }
 
-                return ScopedPermissions::fromJson($value);
+                return AsScopedPermissions::fromJson($value);
             }
 
             public function set(Model $model, string $key, mixed $value, array $attributes): mixed

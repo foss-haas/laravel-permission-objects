@@ -9,7 +9,7 @@ use Illuminate\Contracts\Support\Jsonable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
-class Permissions implements Arrayable, Castable, Jsonable
+class AsPermissions implements Arrayable, Castable, Jsonable
 {
     /**
      * @var array<string, true|list<string>>
@@ -64,7 +64,7 @@ class Permissions implements Arrayable, Castable, Jsonable
                     $objectId = (string) $object->getKey();
                 }
             } else {
-                throw new \InvalidArgumentException('Object must be a string or an object, '.gettype($object).' given.');
+                throw new \InvalidArgumentException('Object must be a string or an object, ' . gettype($object) . ' given.');
             }
         }
         $permission = Permission::resolve($ability, $objectType);
@@ -148,7 +148,7 @@ class Permissions implements Arrayable, Castable, Jsonable
     {
         return Arr::mapWithKeys(
             $this->permissions,
-            fn ($value, $id) => [$id => $value === true ? null : $value]
+            fn($value, $id) => [$id => $value === true ? null : $value]
         );
     }
 
@@ -158,8 +158,8 @@ class Permissions implements Arrayable, Castable, Jsonable
     public function toArray(): array
     {
         return array_merge(...array_map(
-            fn ($value, $id) => is_array($value) ? array_map(
-                fn ($value) => ['name' => $id, 'object_id' => $value],
+            fn($value, $id) => is_array($value) ? array_map(
+                fn($value) => ['name' => $id, 'object_id' => $value],
                 $value
             ) : [['name' => $id, 'object_id' => null]],
             $this->permissions,
@@ -185,7 +185,7 @@ class Permissions implements Arrayable, Castable, Jsonable
         $items = json_decode($json, associative: true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new \InvalidArgumentException('Invalid JSON provided: '.json_last_error_msg());
+            throw new \InvalidArgumentException('Invalid JSON provided: ' . json_last_error_msg());
         }
 
         if (! is_array($items)) {
@@ -202,10 +202,10 @@ class Permissions implements Arrayable, Castable, Jsonable
             public function get(Model $model, string $key, mixed $value, array $attributes): mixed
             {
                 if (! $value) {
-                    return new Permissions;
+                    return new AsPermissions;
                 }
 
-                return Permissions::fromJson($value);
+                return AsPermissions::fromJson($value);
             }
 
             public function set(Model $model, string $key, mixed $value, array $attributes): mixed
