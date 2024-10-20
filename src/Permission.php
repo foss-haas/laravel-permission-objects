@@ -57,7 +57,7 @@ class Permission
     {
         $label = $this->label;
         if ($label instanceof Closure) {
-            $label = $label();
+            return $label();
         }
 
         return $label;
@@ -68,13 +68,14 @@ class Permission
      */
     public function isApplicableTo(mixed $object): bool
     {
-        if ($object === null) {
-            return true;
-        }
+        
         if (is_string($object)) {
             return Relation::getMorphAlias($object) === $this->qualifier;
         }
-        if (! is_object($object)) {
+        if ($object === null && ! $this->objectType) {
+            return true;
+        }
+        if (! is_object($object) || ! $this->objectType) {
             return false;
         }
 
@@ -139,16 +140,16 @@ class Permission
         return static::$instances;
     }
 
-    public static function for(string $class): array
+        public static function for(string|null $objectType): array
     {
         static::loadValues();
 
         return Arr::mapWithKeys(
             array_filter(
                 static::$instances,
-                fn ($permission) => $permission->objectType === $class
+                fn($permission) => $permission->objectType === $objectType
             ),
-            fn ($permission) => [$permission->name => $permission]
+            fn($permission) => [$permission->name => $permission]
         );
     }
 
