@@ -4,8 +4,18 @@ namespace FossHaas\LaravelPermissionObjects\Tests;
 
 use FossHaas\LaravelPermissionObjects\Permission;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(Permission::class, 'all')]
+#[CoversMethod(Permission::class, 'find')]
+#[CoversMethod(Permission::class, 'for')]
+#[CoversMethod(Permission::class, 'getKey')]
+#[CoversMethod(Permission::class, 'getLabel')]
+#[CoversMethod(Permission::class, 'isApplicableTo')]
+#[CoversMethod(Permission::class, 'isNotApplicableTo')]
+#[CoversMethod(Permission::class, 'register')]
+#[CoversMethod(Permission::class, 'resolve')]
 class PermissionTest extends TestCase
 {
   protected $currentLocale = 'en';
@@ -26,11 +36,6 @@ class PermissionTest extends TestCase
     ]);
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\Permission::register
-   * @covers \FossHaas\LaravelPermissionObjects\Permission::find
-   * @covers \FossHaas\LaravelPermissionObjects\Permission::getKey
-   */
   public function testRegisterAndFind()
   {
     $simplePermission = Permission::find('simple-permission');
@@ -42,9 +47,6 @@ class PermissionTest extends TestCase
     $this->assertEquals('test-model.view', $viewPermission->getKey());
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\Permission::resolve
-   */
   public function testResolve()
   {
     $simplePermission = Permission::resolve('simple-permission', null);
@@ -56,9 +58,6 @@ class PermissionTest extends TestCase
     $this->assertEquals('test-model.view', $viewPermission->getKey());
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\Permission::all
-   */
   public function testAll()
   {
     $allPermissions = Permission::all();
@@ -68,9 +67,6 @@ class PermissionTest extends TestCase
     $this->assertArrayHasKey('test-model.edit', $allPermissions);
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\Permission::for
-   */
   public function testFor()
   {
     $testModelPermissions = Permission::for(TestModel::class);
@@ -79,9 +75,6 @@ class PermissionTest extends TestCase
     $this->assertArrayHasKey('edit', $testModelPermissions);
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\Permission::isApplicableTo
-   */
   public function testIsApplicableTo()
   {
     $simplePermission = Permission::find('simple-permission');
@@ -98,9 +91,6 @@ class PermissionTest extends TestCase
     $this->assertFalse($viewPermission->isApplicableTo(new OtherModel()));
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\Permission::isNotApplicableTo
-   */
   public function testIsNotApplicableTo()
   {
     $simplePermission = Permission::find('simple-permission');
@@ -117,9 +107,6 @@ class PermissionTest extends TestCase
     $this->assertTrue($viewPermission->isNotApplicableTo(new OtherModel()));
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\Permission::getLabel
-   */
   public function testDynamicLabel()
   {
     $simplePermission = Permission::find('simple-permission');

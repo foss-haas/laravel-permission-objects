@@ -5,8 +5,17 @@ namespace FossHaas\LaravelPermissionObjects\Tests;
 use FossHaas\LaravelPermissionObjects\AsScopedPermissions;
 use FossHaas\LaravelPermissionObjects\Permission;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use PHPUnit\Framework\Attributes\CoversMethod;
 use PHPUnit\Framework\TestCase;
 
+#[CoversMethod(AsScopedPermissions::class, '__construct')]
+#[CoversMethod(AsScopedPermissions::class, 'can')]
+#[CoversMethod(AsScopedPermissions::class, 'grant')]
+#[CoversMethod(AsScopedPermissions::class, 'has')]
+#[CoversMethod(AsScopedPermissions::class, 'revoke')]
+#[CoversMethod(AsScopedPermissions::class, 'revokeAll')]
+#[CoversMethod(AsScopedPermissions::class, 'scope')]
+#[CoversMethod(AsScopedPermissions::class, 'toArray')]
 class AsScopedPermissionsTest extends TestCase
 {
   protected function setUp(): void
@@ -29,10 +38,6 @@ class AsScopedPermissionsTest extends TestCase
     ]);
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::grant
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::has
-   */
   public function testScopedPermissions()
   {
     $permissions = new AsScopedPermissions();
@@ -47,10 +52,6 @@ class AsScopedPermissionsTest extends TestCase
     $this->assertFalse($permissions->has($viewPermission, '2', 'scope2'));
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::grant
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::has
-   */
   public function testDefaultScope()
   {
     $permissions = new AsScopedPermissions();
@@ -62,10 +63,6 @@ class AsScopedPermissionsTest extends TestCase
     $this->assertTrue($permissions->has($viewPermission, null, 'other-scope'));
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::grant
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::has
-   */
   public function testMultipleScopesCheck()
   {
     $permissions = new AsScopedPermissions();
@@ -77,10 +74,6 @@ class AsScopedPermissionsTest extends TestCase
     $this->assertFalse($permissions->has($viewPermission, null, ['scope2', 'scope3']));
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::grant
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::has
-   */
   public function testAllScopesCheck()
   {
     $permissions = new AsScopedPermissions();
@@ -94,9 +87,6 @@ class AsScopedPermissionsTest extends TestCase
     $this->assertTrue($permissions->has($viewPermission, '2', AsScopedPermissions::ALL_SCOPES));
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::revoke
-   */
   public function testRevokeScoped()
   {
     $permissions = new AsScopedPermissions();
@@ -110,9 +100,6 @@ class AsScopedPermissionsTest extends TestCase
     $this->assertTrue($permissions->has($viewPermission, null, 'scope2'));
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::revokeAll
-   */
   public function testRevokeAllScoped()
   {
     $permissions = new AsScopedPermissions();
@@ -133,9 +120,6 @@ class AsScopedPermissionsTest extends TestCase
     $this->assertTrue($permissions->has($viewPermission, null, 'scope2'));
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::revokeAll
-   */
   public function testRevokeAllWithAllScopes()
   {
     $permissions = new AsScopedPermissions();
@@ -162,9 +146,6 @@ class AsScopedPermissionsTest extends TestCase
     $this->assertEmpty($permissions->toArray());
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::can
-   */
   public function testCanMethod()
   {
     $permissions = new AsScopedPermissions();
@@ -180,9 +161,6 @@ class AsScopedPermissionsTest extends TestCase
     $this->assertFalse($permissions->can('edit', new TestModel(['id' => 2]), 'scope2'));
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::scope
-   */
   public function testScopeMethod()
   {
     $permissions = new AsScopedPermissions();
@@ -193,10 +171,6 @@ class AsScopedPermissionsTest extends TestCase
     $this->assertFalse($permissions->has($viewPermission, null, 'scope2'));
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::__construct
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::toArray
-   */
   public function testLoadAndToArray()
   {
     $initialPermissions = [
@@ -222,11 +196,6 @@ class AsScopedPermissionsTest extends TestCase
     $this->assertContains(['name' => 'test-model.edit', 'object_id' => '2', 'scope' => 'scope2'], $arrayRepresentation);
   }
 
-  /**
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::grant
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::has
-   * @covers \FossHaas\LaravelPermissionObjects\AsScopedPermissions::can
-   */
   public function testMixedScopeAndLevelPermissions()
   {
     $permissions = new AsScopedPermissions();
