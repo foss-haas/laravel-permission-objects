@@ -1,45 +1,53 @@
 {
-    "name": "foss-haas/laravel-permission-objects",
-    "description": "Object-level, model-level and simple permissions for Laravel",
-    "authors": [
-        {
-            "name": "Alan Plum",
-            "email": "alan.plum@foss-haas.de",
-            "homepage": "https://foss-haas.de",
-            "role": "Developer"
-        }
-    ],
-    "homepage": "https://github.com/foss-haas/laravel-permission-objects",
-    "keywords": ["laravel", "permission", "permissions", "roles", "acl", "rbac", "security"],
-    "type": "library",
-    "version": "1.0.0-alpha.1",
-    "license": "MIT",
-    "require": {
-        "php": "^8.1",
-        "illuminate/contracts": "^11.0",
-        "illuminate/database": "^11.0",
-        "illuminate/support": "^11.0"
-    },
-    "require-dev": {
-        "orchestra/testbench": "^9.0",
-        "phpunit/phpunit": "^10.0",
-        "laravel/pint": "^1.18"
-    },
-    "minimum-stability": "dev",
-    "prefer-stable": true,
-    "autoload": {
-        "psr-4": {
-            "FossHaas\\LaravelPermissionObjects\\": "src/"
-        }
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "FossHaas\\LaravelPermissionObjects\\Tests\\": "tests/"
-        }
-    },
-    "scripts": {
-        "test": "phpunit",
-        "format": "php-cs-fixer fix --allow-risky=yes",
-        "analyse": "phpstan analyse"
+  "name": "foss-haas/laravel-permission-objects",
+  "description": "Object-level, model-level and simple permissions for Laravel",
+  "authors": [
+    {
+      "name": "Alan Plum",
+      "email": "alan.plum@foss-haas.de",
+      "homepage": "https://foss-haas.de",
+      "role": "Developer"
     }
+  ],
+  "homepage": "https://github.com/foss-haas/laravel-permission-objects",
+  "keywords": [
+    "laravel",
+    "permission",
+    "permissions",
+    "roles",
+    "acl",
+    "rbac",
+    "security"
+  ],
+  "type": "library",
+  "version": "1.0.0-alpha.1",
+  "license": "MIT",
+  "require": {
+    "php": "^8.1",
+    "illuminate/contracts": "^11.0|^12.0",
+    "illuminate/database": "^11.0|^12.0",
+    "illuminate/support": "^11.0|^12.0"
+  },
+  "require-dev": {
+    "orchestra/testbench": "^9.0|^10.0",
+    "phpunit/phpunit": "^10.0|^11.0|^12.0",
+    "laravel/pint": "^1.18"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "psr-4": {
+      "FossHaas\\LaravelPermissionObjects\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "FossHaas\\LaravelPermissionObjects\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "format": "php-cs-fixer fix --allow-risky=yes",
+    "analyse": "phpstan analyse"
+  }
 }
